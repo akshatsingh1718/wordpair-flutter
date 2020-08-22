@@ -7,7 +7,9 @@ class RandomWords extends StatefulWidget {
 }
 
 class RandomWordsState extends State<RandomWords> {
+  // storing random words pairs
   final _randomWordPairs = <WordPair>[];
+  // user saved words
   final _savedWordPairs = Set<WordPair>();
 
   Widget _buildList() {
@@ -26,6 +28,7 @@ class RandomWordsState extends State<RandomWords> {
     );
   }
 
+  // Building rows for displaying all words
   Widget _buildRow(WordPair pair) {
     final alreadySaved = _savedWordPairs.contains(pair);
 
@@ -50,11 +53,40 @@ class RandomWordsState extends State<RandomWords> {
     );
   }
 
+  // For displaying saved words
+  void _pushSaved() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (BuildContext context) {
+      final Iterable<ListTile> tiles = _savedWordPairs.map((WordPair pair) {
+        return ListTile(
+          title: Text(
+            pair.asPascalCase,
+            style: TextStyle(fontSize: 16),
+          ),
+        );
+      });
+
+      final List<Widget> divided =
+          ListTile.divideTiles(context: context, tiles: tiles).toList();
+
+      return Scaffold(
+        appBar: AppBar(title: Text('Saved WordPairs')),
+        body: ListView(children: divided),
+      );
+    }));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("WordPair Generator"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.list),
+            onPressed: _pushSaved,
+          ),
+        ],
       ),
       body: _buildList(),
     );
